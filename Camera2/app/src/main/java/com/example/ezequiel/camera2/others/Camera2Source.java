@@ -75,7 +75,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+@android.support.annotation.RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class Camera2Source {
     public static final int CAMERA_FACING_BACK = 0;
     public static final int CAMERA_FACING_FRONT = 1;

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     // ANY ATTEMPT TO START CAMERA2 ON API < 21 WILL CRASH.
     private boolean useCamera2 = false;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermissionThenOpenCamera();
 
             switchButton.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onClick(View v) {
                     if(usingFrontCamera) {
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             takePictureButton.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onClick(View v) {
                     switchButton.setEnabled(false);
@@ -122,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             videoButton.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void onClick(View v) {
                     switchButton.setEnabled(false);
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "/camera_picture.png"));
-                picture.compress(Bitmap.CompressFormat.JPEG, 95, out);
+                picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -296,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
             FileOutputStream out = null;
             try {
                 out = new FileOutputStream(new File(Environment.getExternalStorageDirectory(), "/camera2_picture.png"));
-                picture.compress(Bitmap.CompressFormat.JPEG, 95, out);
+                picture.compress(Bitmap.CompressFormat.JPEG, 100, out);
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -324,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void requestPermissionThenOpenCamera() {
         if(ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -337,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createCameraSourceFront() {
         previewFaceDetector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
@@ -377,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createCameraSourceBack() {
         previewFaceDetector = new FaceDetector.Builder(context)
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
@@ -417,6 +425,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void startCameraSource() {
         if(useCamera2) {
             if(mCamera2Source != null) {
@@ -500,6 +509,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private final CameraSourcePreview.OnTouchListener CameraPreviewTouchListener = new CameraSourcePreview.OnTouchListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean onTouch(View v, MotionEvent pEvent) {
             v.onTouchEvent(pEvent);
@@ -542,6 +552,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
@@ -561,6 +572,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onResume() {
         super.onResume();

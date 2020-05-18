@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.example.ezequiel.camera2.R;
 import com.example.ezequiel.camera2.others.GraphicOverlay;
@@ -28,6 +30,12 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
 
     private BitmapFactory.Options opt;
     private Resources resources;
+
+    private static final float FACE_POSITION_RADIUS = 10.0f;
+    private static final float ID_TEXT_SIZE = 40.0f;
+    private static final float ID_Y_OFFSET = 30.0f;
+    private static final float ID_X_OFFSET = -30.0f;
+    private static final float BOX_STROKE_WIDTH = 5.0f;
 
     private int faceId;
     PointF facePosition;
@@ -52,6 +60,15 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
     PointF leftCheek = null;
     PointF rightCheek = null;
 
+    private static final int[] COLOR_CHOICES = {
+            Color.BLUE //, Color.CYAN, Color.GREEN, Color.MAGENTA, Color.RED, Color.WHITE, Color.YELLOW
+    };
+    private static int currentColorIndex = 0;
+
+    private final Paint facePositionPaint;
+    private final Paint idPaint;
+    private final Paint boxPaint;
+
     private volatile Face mFace;
 
     public FaceGraphic(GraphicOverlay overlay, Context context) {
@@ -60,6 +77,21 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         opt.inScaled = false;
         resources = context.getResources();
         marker = BitmapFactory.decodeResource(resources, R.drawable.marker, opt);
+
+        currentColorIndex = (currentColorIndex + 1) % COLOR_CHOICES.length;
+        final int selectedColor = COLOR_CHOICES[currentColorIndex];
+
+        facePositionPaint = new Paint();
+        facePositionPaint.setColor(selectedColor);
+
+        idPaint = new Paint();
+        idPaint.setColor(selectedColor);
+        idPaint.setTextSize(ID_TEXT_SIZE);
+
+        boxPaint = new Paint();
+        boxPaint.setColor(selectedColor);
+        boxPaint.setStyle(Paint.Style.STROKE);
+        boxPaint.setStrokeWidth(BOX_STROKE_WIDTH);
     }
 
     public void setId(int id) {
@@ -91,6 +123,7 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         mFace = null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void draw(Canvas canvas) {
         Face face = mFace;
@@ -156,31 +189,46 @@ public class FaceGraphic extends GraphicOverlay.Graphic {
         Paint mPaint = new Paint();
         mPaint.setColor(Color.WHITE);
         mPaint.setStrokeWidth(4);
-        if(faceCenter != null)
-            canvas.drawBitmap(marker, faceCenter.x, faceCenter.y, null);
-        if(noseBasePos != null)
-            canvas.drawBitmap(marker, noseBasePos.x, noseBasePos.y, null);
-        if(leftEyePos != null)
-            canvas.drawBitmap(marker, leftEyePos.x, leftEyePos.y, null);
-        if(rightEyePos != null)
-            canvas.drawBitmap(marker, rightEyePos.x, rightEyePos.y, null);
-        if(mouthBase != null)
-            canvas.drawBitmap(marker, mouthBase.x, mouthBase.y, null);
-        if(leftMouthCorner != null)
-            canvas.drawBitmap(marker, leftMouthCorner.x, leftMouthCorner.y, null);
-        if(rightMouthCorner != null)
-            canvas.drawBitmap(marker, rightMouthCorner.x, rightMouthCorner.y, null);
-        if(leftEar != null)
-            canvas.drawBitmap(marker, leftEar.x, leftEar.y, null);
-        if(rightEar != null)
-            canvas.drawBitmap(marker, rightEar.x, rightEar.y, null);
-        if(leftEarTip != null)
-            canvas.drawBitmap(marker, leftEarTip.x, leftEarTip.y, null);
-        if(rightEarTip != null)
-            canvas.drawBitmap(marker, rightEarTip.x, rightEarTip.y, null);
-        if(leftCheek != null)
-            canvas.drawBitmap(marker, leftCheek.x, leftCheek.y, null);
-        if(rightCheek != null)
-            canvas.drawBitmap(marker, rightCheek.x, rightCheek.y, null);
+//        if(faceCenter != null)
+//            canvas.drawBitmap(marker, faceCenter.x, faceCenter.y, null);
+//        if(noseBasePos != null)
+//            canvas.drawBitmap(marker, noseBasePos.x, noseBasePos.y, null);
+//        if(leftEyePos != null)
+//            canvas.drawBitmap(marker, leftEyePos.x, leftEyePos.y, null);
+//        if(rightEyePos != null)
+//            canvas.drawBitmap(marker, rightEyePos.x, rightEyePos.y, null);
+//        if(mouthBase != null)
+//            canvas.drawBitmap(marker, mouthBase.x, mouthBase.y, null);
+//        if(leftMouthCorner != null)
+//            canvas.drawBitmap(marker, leftMouthCorner.x, leftMouthCorner.y, null);
+//        if(rightMouthCorner != null)
+//            canvas.drawBitmap(marker, rightMouthCorner.x, rightMouthCorner.y, null);
+//        if(leftEar != null)
+//            canvas.drawBitmap(marker, leftEar.x, leftEar.y, null);
+//        if(rightEar != null)
+//            canvas.drawBitmap(marker, rightEar.x, rightEar.y, null);
+//        if(leftEarTip != null)
+//            canvas.drawBitmap(marker, leftEarTip.x, leftEarTip.y, null);
+//        if(rightEarTip != null)
+//            canvas.drawBitmap(marker, rightEarTip.x, rightEarTip.y, null);
+//        if(leftCheek != null)
+//            canvas.drawBitmap(marker, leftCheek.x, leftCheek.y, null);
+//        if(rightCheek != null)
+//            canvas.drawBitmap(marker, rightCheek.x, rightCheek.y, null);
+
+        canvas.drawCircle(faceCenter.x,faceCenter.y,FACE_POSITION_RADIUS,facePositionPaint);
+        canvas.drawText(
+                "happiness: " + String.format("%.2f", face.getIsSmilingProbability()),
+                faceCenter.x + ID_X_OFFSET * 3,
+                faceCenter.y - ID_Y_OFFSET,
+                idPaint);
+        canvas.drawText("Face Position: " + String.format("%.2f / %.2f", faceCenter.x, faceCenter.y), faceCenter.x - ID_X_OFFSET * 3, faceCenter.y + ID_Y_OFFSET, idPaint);
+        float xOffset = scaleX(face.getWidth() / 3.0f);
+        float yOffset = scaleY(face.getHeight() / 3.0f);
+        float left = faceCenter.x - xOffset;
+        float top = faceCenter.y - yOffset;
+        float right = faceCenter.x + xOffset;
+        float bottom = faceCenter.y + yOffset;
+        canvas.drawRoundRect(left, top, right, bottom, 80.0f, 80.0f, boxPaint);
     }
 }
